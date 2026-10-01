@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>StyloCat · Relatório comercial · Ciclo 2</title>
+<meta name="theme-color" content="#14101C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#14101C; --surf:#1E1828; --surf2:#241D31; --line:#312842;
+    --tx:#F3EFF8; --mut:#9A91AB; --dim:#6B6180;
+    --acc:#FF2E7E; --acc-d:#3A2233;
+    --pos:#4ADE9B; --pos-d:#17301F; --warn:#FFB84D; --warn-d:#332711;
+    --dead:#382F4C;
+    --sans:"Archivo",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,"DejaVu Sans Mono",monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:960px;margin:0 auto;padding:0 20px}
+
+  .top{border-bottom:1px solid var(--line);padding:22px 0 18px}
+  .top .brand{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--mut);font-weight:600}
+  .top .per{font-family:var(--mono);font-size:12.5px;color:var(--dim);margin-top:6px}
+
+  .hero{padding-block:44px 40px}
+  .hero h1{font-size:clamp(30px,8.4vw,54px);font-weight:800;line-height:1.02;letter-spacing:-.03em;max-width:15ch}
+  .hero h1 em{font-style:normal;color:var(--acc)}
+  .hero p{color:var(--mut);font-size:16px;margin-top:16px;max-width:48ch}
+
+  .grid-note{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin:32px 0 14px}
+
+  /* tira de dias */
+  .strip{display:flex;align-items:flex-end;gap:3px;height:140px;padding-bottom:22px;position:relative}
+  .strip:after{content:"";position:absolute;left:0;right:0;bottom:21px;height:1px;background:var(--line)}
+  .d{flex:1;position:relative;display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+  .d .bar{width:100%;background:var(--acc);border-radius:2px 2px 0 0;opacity:0;transform:scaleY(.2);transform-origin:bottom;
+          transition:opacity .45s ease,transform .5s cubic-bezier(.2,.9,.3,1.3)}
+  .d.zero .bar{background:var(--dead);box-shadow:none}
+  .d.show .bar{opacity:1;transform:scaleY(1)}
+  .d .lb{position:absolute;bottom:-21px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:9.5px;color:var(--dim);white-space:nowrap}
+  .gaplabel{margin-top:14px;font-family:var(--mono);font-size:12px;color:var(--warn)}
+
+  .legend{display:flex;flex-wrap:wrap;gap:14px 22px;margin-top:22px}
+  .lg{display:flex;align-items:center;gap:9px;font-size:13.5px;color:var(--mut)}
+  .lg i{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+  .lg b{color:var(--tx);font-family:var(--mono);font-weight:600}
+
+  .sec{padding:44px 0;border-top:1px solid var(--line)}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);font-weight:500;margin-bottom:14px}
+  .sec h2{font-size:clamp(22px,5.4vw,30px);font-weight:700;letter-spacing:-.02em;line-height:1.15}
+  .sec .lede{color:var(--mut);margin-top:12px;max-width:58ch;font-size:15.5px}
+
+  .read{background:var(--warn-d);border:1px solid #4A3A18;border-radius:10px;padding:22px;margin-top:24px}
+  .read .hd{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--warn);font-weight:600;margin-bottom:16px}
+  .read .it{padding-top:16px;margin-top:16px;border-top:1px solid #4A3A18}
+  .read .it.first{padding-top:0;margin-top:0;border-top:none}
+  .read h4{font-size:16px;font-weight:700;margin-bottom:6px;color:#FFE9C4}
+  .read p{font-size:14.5px;color:#D9C8A8;line-height:1.6}
+
+  .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:26px;border-radius:10px;overflow:hidden}
+  .kpi{background:var(--surf);padding:18px 16px}
+  .kpi .v{font-family:var(--mono);font-size:26px;font-weight:600;letter-spacing:-.03em;line-height:1.1}
+  .kpi .v.acc{color:var(--acc)}
+  .kpi .v.pos{color:var(--pos)}
+  .kpi .k{font-size:12.5px;color:var(--mut);margin-top:7px;line-height:1.35}
+  .kpi .delta{font-family:var(--mono);font-size:11.5px;margin-top:6px}
+  .kpi .delta.down{color:var(--acc)}
+  .kpi .delta.up{color:var(--pos)}
+
+  table{width:100%;border-collapse:collapse;font-size:15px}
+  th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:500;padding:0 12px 10px 0;border-bottom:1px solid var(--line)}
+  td{padding:11px 12px 11px 0;border-bottom:1px solid var(--line);color:var(--tx)}
+  td.num,th.num{text-align:right;padding-right:0;font-family:var(--mono);font-variant-numeric:tabular-nums}
+  td.dim{color:var(--mut)}
+  .tight td{padding:9px 12px 9px 0}
+
+  .two{display:flex;flex-direction:column;gap:28px;margin-top:26px}
+  .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500;margin-bottom:12px}
+  .call{background:var(--surf);border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:8px;padding:16px 18px;font-size:14.5px;line-height:1.6;color:var(--mut)}
+  .call b{color:var(--tx)}
+  .call.good{border-left-color:var(--pos)}
+
+  .gg{margin-top:26px;display:flex;flex-direction:column;gap:14px}
+  .g{background:var(--surf);border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:10px;padding:20px}
+  .g.q{border-left-color:var(--warn)}
+  .g .big{font-family:var(--mono);font-size:34px;font-weight:600;letter-spacing:-.03em;line-height:1;color:var(--acc)}
+  .g.q .big{color:var(--warn)}
+  .g .cap{font-size:12.5px;color:var(--dim);margin-top:8px;font-family:var(--mono)}
+  .g h3{font-size:18px;font-weight:700;margin:16px 0 8px;line-height:1.28}
+  .g p{font-size:14.5px;color:var(--mut);line-height:1.6}
+
+  .plan{margin-top:26px;border-top:1px solid var(--line)}
+  .pi{padding:20px 0;border-bottom:1px solid var(--line)}
+  .pi .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);display:inline-block;border:1px solid var(--line);padding:3px 8px;border-radius:99px}
+  .pi .tag.red{color:var(--acc);border-color:#5A2A42}
+  .pi h4{font-size:17px;font-weight:700;margin:12px 0 8px;line-height:1.3}
+  .pi p{font-size:14.5px;color:var(--mut);line-height:1.6}
+  .pi .goal{font-family:var(--mono);font-size:13px;color:var(--pos);margin-top:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .pi .goal span{color:var(--dim)}
+
+  .box{background:var(--acc-d);border:1px solid #4D2B40;border-radius:10px;padding:20px;margin-top:26px}
+  .box p{font-size:15px;line-height:1.6;color:#F6DDE9}
+  .box b{color:var(--acc)}
+  .box.good{background:var(--pos-d);border-color:#245139}
+  .box.good p{color:#CFEFDC}
+  .box.good b{color:var(--pos)}
+
+  .foot{padding:34px 0 46px;border-top:1px solid var(--line);color:var(--dim);font-size:13px}
+  .foot .n{font-family:var(--mono);font-size:11.5px;margin-top:10px;line-height:1.7}
+
+  @media (min-width:720px){
+    .kpis{grid-template-columns:repeat(5,1fr)}
+    .gg{flex-direction:row}
+    .gg .g{flex:1}
+    .two{flex-direction:row}
+    .two > div{flex:1;min-width:0}
+    .pi{display:grid;grid-template-columns:170px 1fr 215px;gap:26px;align-items:start}
+    .pi h4{margin-top:0}
+    .pi .goal{margin-top:0;justify-content:flex-end;text-align:right}
+    .strip{height:180px;gap:5px}
+  }
+  @media (prefers-reduced-motion:reduce){ .d .bar{opacity:1;transform:none;transition:none} }
+  :focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">StyloCat · Relatório comercial</div>
+    <div class="per">31/08 a 29/09/2026 · ciclo 2 de 3 · responsável: Yuri</div>
+  </div>
+</header>
+
+<main>
+
+<section class="hero wrap">
+  <h1>30 dias no mês.<br><em>Vendas em 9 deles.</em></h1>
+  <p>Cada barra abaixo é um dia. A altura é o número de vendas registradas naquele dia.</p>
+
+  <div class="grid-note">vendas registradas por dia</div>
+  <div class="strip" id="strip" role="img" aria-label="Vendas registradas por dia entre 31 de agosto e 29 de setembro: 9 dias com venda e 21 sem, incluindo 12 dias seguidos sem nenhum registro entre 5 e 16 de setembro."></div>
+  <div class="gaplabel">↑ 12 dias seguidos sem nenhum registro — 05/09 a 16/09</div>
+
+  <div class="legend">
+    <div class="lg"><i style="background:#FF2E7E"></i><b>9</b> dias com venda registrada</div>
+    <div class="lg"><i style="background:#382F4C"></i><b>21</b> dias sem nenhum registro</div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Antes de ler os números</div>
+    <h2>Três coisas que mudam a leitura</h2>
+    <p class="lede">A primeira é a mais importante deste ciclo: ela decide o que os números abaixo significam.</p>
+    <div class="read">
+      <div class="hd">Como ler este relatório</div>
+      <div class="it first">
+        <h4>Há 12 dias do mês sem explicação</h4>
+        <p>Entre 5 e 16 de setembro não existe uma única venda registrada. Isso tem duas leituras possíveis
+        e opostas: ou a loja realmente não vendeu nesse período, ou as vendas aconteceram e não foram
+        lançadas no sistema. <b>Esta é a primeira pergunta da reunião</b> — enquanto não for respondida,
+        a queda de 56% abaixo não deve ser lida como queda de venda.</p>
+      </div>
+      <div class="it">
+        <h4>O relatório só enxerga o que foi preenchido</h4>
+        <p>Todo valor aqui veio do que a equipe digitou no CRM. Venda fechada sem lançamento não aparece
+        em lugar nenhum e some do faturamento do mês. Foi o aviso do ciclo 1 e segue valendo — agora com
+        um caso concreto na tela.</p>
+      </div>
+      <div class="it">
+        <h4>Agora existe comparação de verdade</h4>
+        <p>Este é o primeiro mês com período anterior medido. As variações abaixo são reais, não efeito de
+        base vazia como em agosto. E pela primeira vez dá para saber quem comprou nos dois meses.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">O mês em números</div>
+    <h2>Setembro contra agosto</h2>
+    <div class="kpis">
+      <div class="kpi"><div class="v">27</div><div class="k">Vendas fechadas</div><div class="delta down">−60,9%</div></div>
+      <div class="kpi"><div class="v">10.255</div><div class="k">Receita em R$</div><div class="delta down">−56,0%</div></div>
+      <div class="kpi"><div class="v">23</div><div class="k">Clientes distintos</div><div class="delta down">−55,8%</div></div>
+      <div class="kpi"><div class="v pos">379</div><div class="k">Ticket médio em R$</div><div class="delta up">+12,4%</div></div>
+      <div class="kpi"><div class="v pos">248</div><div class="k">Venda típica em R$</div><div class="delta up">+11,7%</div></div>
+    </div>
+
+    <div class="two">
+      <div>
+        <div class="lbl">Comparativo completo</div>
+        <table class="tight">
+          <tr><th>Indicador</th><th class="num">Agosto</th><th class="num">Setembro</th></tr>
+          <tr><td>Vendas</td><td class="num dim">69</td><td class="num">27</td></tr>
+          <tr><td>Receita</td><td class="num dim">R$ 23.325,69</td><td class="num">R$ 10.255,98</td></tr>
+          <tr><td>Ticket médio</td><td class="num dim">R$ 338,05</td><td class="num">R$ 379,85</td></tr>
+          <tr><td>Venda típica</td><td class="num dim">R$ 222,00</td><td class="num">R$ 248,00</td></tr>
+          <tr><td>Clientes distintos</td><td class="num dim">52</td><td class="num">23</td></tr>
+          <tr><td>Negócios no funil</td><td class="num dim">70</td><td class="num">27</td></tr>
+          <tr><td>Perda registrada</td><td class="num dim">R$ 0,00</td><td class="num">R$ 0,00</td></tr>
+          <tr><td>Valor em negociação</td><td class="num dim">R$ 174,00</td><td class="num">R$ 0,00</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="lbl">O que se lê daqui</div>
+        <div class="call">
+          <b>O volume caiu, o valor por venda subiu.</b> Vendem-se menos peças, porém mais caras:
+          o ticket médio subiu 12,4% e a venda típica 11,7%. Esse movimento é consistente tanto com
+          um mês de menos movimento quanto com um mês em que só as vendas maiores foram lançadas.
+        </div>
+        <div class="call" style="margin-top:16px">
+          <b>Nenhum negócio em andamento no fim do mês.</b> A etapa “Negociando” fechou setembro com
+          zero contatos e R$ 0,00. Não há nada previsto para entrar em outubro — a loja começa o mês do zero.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">O ponto do mês</div>
+    <h2>O padrão de dias mudou, e muito</h2>
+    <p class="lede">Este é o teste que separa “vendeu menos” de “registrou menos”. Ele não dá a resposta sozinho, mas mostra o tamanho da mudança.</p>
+
+    <div class="two">
+      <div>
+        <div class="lbl">Agosto x setembro</div>
+        <table class="tight">
+          <tr><th>&nbsp;</th><th class="num">Agosto</th><th class="num">Setembro</th></tr>
+          <tr><td>Dias com venda</td><td class="num dim">21 de 33</td><td class="num">9 de 30</td></tr>
+          <tr><td>Dias úteis sem venda</td><td class="num dim">4 de 25</td><td class="num">13 de 22</td></tr>
+          <tr><td>% dos dias úteis parados</td><td class="num dim">16%</td><td class="num">59%</td></tr>
+          <tr><td>Maior sequência sem venda</td><td class="num dim">2 dias</td><td class="num">12 dias</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="lbl">A leitura</div>
+        <div class="call">
+          Em agosto a loja registrou venda em praticamente todo dia útil — a maior pausa foi de
+          <b>2 dias</b>. Em setembro a maior pausa foi de <b>12 dias</b>, e mais da metade dos dias
+          úteis ficou sem nenhum lançamento.
+        </div>
+        <div class="call" style="margin-top:16px">
+          As vendas de setembro também estão concentradas em <b>6 datas isoladas</b>, com vários
+          lançamentos cada. É um padrão de registro feito em lote, não de venda distribuída ao longo do mês.
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <p><b>A pergunta que resolve isso em um minuto:</b> a loja vendeu entre 5 e 16 de setembro?
+      Houve viagem, loja fechada ou falta de estoque nesse período? Se a resposta for “vendeu normal”,
+      o problema deste mês não é comercial — é de registro, e a receita real da StyloCat está maior
+      do que este relatório mostra.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">A boa notícia do ciclo</div>
+    <h2>A recompra agora é medida de verdade</h2>
+    <p class="lede">Em agosto a fidelidade era um piso estimado, porque não havia mês anterior. Agora dá para cruzar os dois meses nome por nome.</p>
+
+    <div class="kpis">
+      <div class="kpi"><div class="v pos">7</div><div class="k">Clientes compraram nos dois meses</div></div>
+      <div class="kpi"><div class="v">13,5%</div><div class="k">Da base de agosto voltou</div></div>
+      <div class="kpi"><div class="v pos">30,4%</div><div class="k">Dos clientes de setembro já eram da base</div></div>
+      <div class="kpi"><div class="v">R$ 3.002</div><div class="k">Receita vinda de quem voltou</div></div>
+      <div class="kpi"><div class="v pos">29,3%</div><div class="k">Da receita do mês</div></div>
+    </div>
+
+    <div class="two">
+      <div>
+        <div class="lbl">Quem voltou em setembro</div>
+        <table class="tight">
+          <tr><th>Cliente</th><th class="num">Agosto</th><th class="num">Setembro</th></tr>
+          <tr><td>Ingrid Kailanny</td><td class="num dim">R$ 1.755,00</td><td class="num">R$ 563,00</td></tr>
+          <tr><td>Cliente ✨</td><td class="num dim">R$ 492,00</td><td class="num">R$ 561,00</td></tr>
+          <tr><td>Ana Cleide</td><td class="num dim">R$ 186,00</td><td class="num">R$ 527,00</td></tr>
+          <tr><td>loja Ebenézer</td><td class="num dim">R$ 238,00</td><td class="num">R$ 438,00</td></tr>
+          <tr><td>Maria 💕</td><td class="num dim">R$ 799,00</td><td class="num">R$ 420,00</td></tr>
+          <tr><td>Maria Silva</td><td class="num dim">R$ 289,00</td><td class="num">R$ 289,00</td></tr>
+          <tr><td>Bruno</td><td class="num dim">R$ 274,00</td><td class="num">R$ 204,00</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="lbl">O que isso significa</div>
+        <div class="call good">
+          <b>Num mês fraco, quase um terço da receita veio de quem já conhecia a loja</b> —
+          R$ 3.002,00 em 8 vendas, sem nenhum custo de mídia e sem nenhum processo de retomada por trás.
+        </div>
+        <div class="call good" style="margin-top:16px">
+          <b>Três dessas clientes gastaram mais em setembro do que em agosto.</b> Ana Cleide quase
+          triplicou, loja Ebenézer quase dobrou. Quem volta tende a voltar maior.
+        </div>
+        <div class="call" style="margin-top:16px">
+          O contraponto: <b>13,5% da base de agosto voltou</b>. É o primeiro número de retenção da loja,
+          e é dele que o mês 3 parte.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">O combinado do ciclo 1</div>
+    <h2>O que ficou de fazer e não foi feito</h2>
+    <p class="lede">Verificável direto no sistema, sem depender de relato.</p>
+
+    <div class="gg">
+      <div class="g">
+        <div class="big">R$ 0,00</div>
+        <div class="cap">perda registrada · 2º mês seguido</div>
+        <h3>Motivo obrigatório não entrou</h3>
+        <p>Nenhum negócio foi marcado como perdido em setembro, igual a agosto. Segue impossível saber
+        se a loja perde por preço, prazo, estoque ou demora. Era a ação nº 2 do plano.</p>
+      </div>
+      <div class="g">
+        <div class="big">0</div>
+        <div class="cap">negócios em “Negociando”</div>
+        <h3>Valor na negociação não entrou</h3>
+        <p>O valor continua só aparecendo quando a venda fecha. Sem isso não existe previsão, e o mês
+        vira sempre uma surpresa no último dia. Era a ação nº 3 do plano.</p>
+      </div>
+      <div class="g q">
+        <div class="big">59%</div>
+        <div class="cap">dos negócios sem responsável</div>
+        <h3>Este melhorou</h3>
+        <p>Eram 86% dos negócios sem consultor em agosto, agora são 59% — 16 de 27. Ainda alto,
+        mas é a única das ações combinadas que andou.</p>
+      </div>
+    </div>
+
+    <div class="box">
+      <p><b>Por que isso aparece no relatório.</b> As duas ações que não saíram do papel são exatamente as
+      que teriam respondido a dúvida deste mês. Com motivo de perda e valor em negociação preenchidos,
+      saberíamos hoje se setembro foi um mês ruim de venda ou um mês ruim de registro — sem precisar perguntar.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow">Próximo mês</div>
+    <h2>Registro diário e retomada da base</h2>
+    <p class="lede">O ciclo 3 tem uma prioridade acima de todas: garantir que o número do mês seja confiável.</p>
+    <div class="plan">
+      <div class="pi">
+        <div><span class="tag red">Prioridade</span></div>
+        <div>
+          <h4>Lançamento no mesmo dia da venda</h4>
+          <p>Toda venda entra no CRM no dia em que acontece, não em lote. É o que impede outro mês
+          com 12 dias em branco e sem explicação.</p>
+        </div>
+        <div class="goal">9 → 20+ dias <span>com registro no mês</span></div>
+      </div>
+      <div class="pi">
+        <div><span class="tag">Pendente do ciclo 1</span></div>
+        <div>
+          <h4>Motivo obrigatório no encerramento</h4>
+          <p>Terceira tentativa. Sem isso o relatório do ciclo 3 volta a não ter o quadro de motivos de perda,
+          que é o que diria onde atacar primeiro.</p>
+        </div>
+        <div class="goal">0 → 100% com motivo <span>perdas registradas</span></div>
+      </div>
+      <div class="pi">
+        <div><span class="tag">Pendente do ciclo 1</span></div>
+        <div>
+          <h4>Valor preenchido já na negociação</h4>
+          <p>Com valor na etapa, a loja passa a saber quanto tem em jogo antes de o mês acabar,
+          em vez de descobrir o resultado no fechamento.</p>
+        </div>
+        <div class="goal">previsão do mês <span>passa a existir</span></div>
+      </div>
+      <div class="pi">
+        <div><span class="tag">Oportunidade</span></div>
+        <div>
+          <h4>Retomada ativa de quem comprou e sumiu</h4>
+          <p>45 clientes compraram em agosto e não voltaram em setembro. Eles já conhecem a loja,
+          já compraram uma vez e não custam mídia. É a lista mais barata que a StyloCat tem.</p>
+        </div>
+        <div class="goal">13,5% → 25% <span>retenção mês a mês</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    Relatório enviado dois dias antes da reunião de leitura.
+    <div class="n">
+      Período: 31/08 a 29/09/2026 · Fonte: Funil de Vendas (CRM), export conferido linha a linha<br>
+      Ciclo 1 para comparação: 27/07 a 28/08/2026 · as duas janelas não se sobrepõem<br>
+      Atendimentos, fila de contatos e desempenho de anúncios: não levantados neste ciclo.
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var dias=[["31/08",3],["01/09",4],["02",0],["03",0],["04",5],["05",0],["06",0],["07",0],["08",0],
+            ["09",0],["10",0],["11",0],["12",0],["13",0],["14",0],["15",0],["16",0],["17",4],["18",3],
+            ["19",0],["20",0],["21",0],["22",0],["23",1],["24",0],["25",4],["26",0],["27",0],["28",1],["29",2]];
+  var el=document.getElementById('strip');
+  if(!el) return;
+  var max=5, nodes=[];
+  dias.forEach(function(d,i){
+    var w=document.createElement('div');
+    w.className='d'+(d[1]===0?' zero':'');
+    var b=document.createElement('div');
+    b.className='bar';
+    b.style.height=(d[1]===0?3:Math.round(100*d[1]/max))+'%';
+    w.appendChild(b);
+    if(i===0||i===dias.length-1||(i+1)%5===0){
+      var l=document.createElement('span'); l.className='lb'; l.textContent=d[0]; w.appendChild(l);
+    }
+    el.appendChild(w); nodes.push(b);
+  });
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){ nodes.forEach(function(n){n.parentNode.classList.add('show')}); return; }
+  nodes.forEach(function(n,i){
+    setTimeout(function(){ n.parentNode.classList.add('show'); }, 200+i*38);
+  });
+})();
+</script>
+
+</body>
+</html>
